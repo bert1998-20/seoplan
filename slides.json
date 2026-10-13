@@ -1,91 +1,204 @@
-import json
-import streamlit as st
-
-st.set_page_config(
-    page_title="SEO / ASO Strategic Plan",
-    page_icon="📈",
-    layout="wide",
-)
-
-with open("slides.json", "r", encoding="utf-8") as f:
-    deck = json.load(f)
-
-# --- Sidebar navigation ---
-st.sidebar.title("📊 Deck Navigation")
-slide_titles = [f"{s['id']}. {s['title']}" for s in deck["slides"]]
-choice = st.sidebar.radio("Go to slide", slide_titles, label_visibility="collapsed")
-selected_id = int(choice.split(".")[0])
-slide = next(s for s in deck["slides"] if s["id"] == selected_id)
-
-st.sidebar.markdown("---")
-st.sidebar.caption(deck["footer"])
-st.sidebar.progress(selected_id / len(deck["slides"]))
-
-# --- Render helpers ---
-def render_title(s):
-    st.markdown(f"<h1 style='text-align:center;margin-top:10vh;'>{s['title']}</h1>", unsafe_allow_html=True)
-    st.markdown(f"<h3 style='text-align:center;color:#2E7DFF;'>{s['subtitle']}</h3>", unsafe_allow_html=True)
-    for line in s.get("body", []):
-        st.markdown(f"<p style='text-align:center;'>{line}</p>", unsafe_allow_html=True)
-
-def render_funnel(s):
-    st.header(s["title"])
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        for i, step in enumerate(s["funnel"]):
-            st.markdown(
-                f"<div style='background:linear-gradient(90deg,#2E7DFF,#22C55E);"
-                f"padding:10px 20px;border-radius:8px;margin:6px 0;"
-                f"color:white;font-weight:600;width:{100 - i*5}%;'>{step}</div>",
-                unsafe_allow_html=True,
-            )
-    with col2:
-        for kpi in s.get("kpis", []):
-            st.success(kpi)
-
-def render_table(s):
-    st.header(s["title"])
-    st.dataframe(
-        [dict(zip(s["columns"], row)) for row in s["rows"]],
-        use_container_width=True,
-        hide_index=True,
-    )
-
-def render_list(s):
-    st.header(s["title"])
-    for i, item in enumerate(s["items"], 1):
-        st.markdown(f"**{i}.** {item}")
-
-def render_columns(s):
-    st.header(s["title"])
-    cols = st.columns(len(s["columns"]))
-    for col, block in zip(cols, s["columns"]):
-        with col:
-            st.subheader(block["header"])
-            for item in block["items"]:
-                st.markdown(f"- {item}")
-
-def render_flow(s):
-    st.header(s["title"])
-    st.markdown(" → ".join(f"**{x}**" for x in s["steps"]))
-
-def render_quadrants(s):
-    st.header(s["title"])
-    cols = st.columns(2)
-    for i, q in enumerate(s["quadrants"]):
-        with cols[i % 2]:
-            st.subheader(q["label"])
-            for item in q["items"]:
-                st.markdown(f"- {item}")
-
-# --- Dispatch ---
-renderers = {
-    "title": render_title,
-    "funnel": render_funnel,
-    "table": render_table,
-    "list": render_list,
-    "columns": render_columns,
-    "flow": render_flow,
-    "quadrants": render_quadrants,
+{
+  "title": "Strategic Plan & Approach",
+  "subtitle": "Organic Growth via SEO & ASO",
+  "footer": "SEO / ASO Strategic Plan - Confidential",
+  "slides": [
+    {
+      "id": 1,
+      "title": "Strategic Plan & Approach",
+      "subtitle": "Organic Growth via SEO & ASO",
+      "type": "title",
+      "body": [
+        "Team: SEO Lead / On-Page SEO / Off-Page/Blackhat SEO / SEO Intelligence / Blackhat ASO",
+        "Objective: Drive more sales through organic search and app-store visibility",
+        "Horizon: 3+ months (Foundation, Cleanup, Growth, Scale)"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Executive Summary",
+      "type": "funnel",
+      "funnel": [
+        "Search Demand",
+        "SERP Visibility",
+        "Organic Traffic",
+        "Landing Page",
+        "Registration",
+        "First Conversion",
+        "Revenue",
+        "Repeat Conversion"
+      ],
+      "kpis": [
+        "Organic Conversions / Revenue",
+        "Registrations to First Conversion to Repeat",
+        "Installs to Registrations to Revenue (ASO)"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Team Structure and Ownership",
+      "type": "table",
+      "columns": ["Role", "Department", "Main Responsibilities", "Primary KPI"],
+      "rows": [
+        ["SEO Lead", "Strategy and Management", "Revenue targets, keyword priorities, markets, roadmaps", "Organic conversions and revenue"],
+        ["On-Page SEO", "Technical SEO + Content + CRO", "Indexation, canonicals, CWV, schema, internal links, CRO", "Rankings and Organic CVR"],
+        ["Blackhat SEO / Off-Page", "Authority and High-Risk SEO", "Expired domains, link networks, redirects, SERP testing", "Referring domains and assisted conversions"],
+        ["SEO Intelligence", "Crawling, Monitoring, Intelligence", "Competitor scans, SERP monitoring, anomaly detection", "Detection speed and opportunities"],
+        ["Blackhat ASO", "App Store Growth", "Keyword testing, listings, screenshots, reviews, localization", "Installs to registrations to revenue"]
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Strategic Priorities",
+      "type": "list",
+      "items": [
+        "Competitor and Market Targeting",
+        "Authority-Based SEO",
+        "Brand Demand Capture",
+        "App and ASO Expansion",
+        "Redirect and Traffic Routing Experiments",
+        "Aggressive SERP Testing",
+        "Blackhat ASO"
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Phase 1 - Foundation (Week 1-2)",
+      "type": "columns",
+      "columns": [
+        { "header": "SEO Lead", "items": ["Targets", "Markets", "Revenue Pages", "KPIs"] },
+        { "header": "On-Page", "items": ["Technical audit", "Indexation", "Internal links", "CWV"] },
+        { "header": "Off-Page", "items": ["Backlink research", "Competitor research"] },
+        { "header": "Intelligence", "items": ["SERP baseline", "Ranking baseline", "Technical baseline"] },
+        { "header": "ASO", "items": ["Listing baseline", "Keyword baseline"] }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Phase 2 - Cleanup and Optimization (Week 3-4)",
+      "type": "list",
+      "items": [
+        "Fix indexation, canonicals, redirects, broken links, orphan pages",
+        "Improve internal linking, metadata, content gaps",
+        "Build prospect DB, outreach system, PR opportunities, link reclamation",
+        "Start SERP, backlink, and technical monitoring",
+        "Optimize ASO listing"
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Phase 3 - Growth (Month 2)",
+      "type": "flow",
+      "steps": [
+        "Money Page",
+        "Supporting Content",
+        "Comparison Content",
+        "How-To Content",
+        "FAQ/Problem Content",
+        "Internal Links",
+        "Money Page"
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Phase 4 - Scale (Month 3+)",
+      "type": "quadrants",
+      "quadrants": [
+        { "label": "SCALE", "items": ["What is working"] },
+        { "label": "FIX", "items": ["What is underperforming"] },
+        { "label": "STOP", "items": ["What is not producing results"] },
+        { "label": "TEST", "items": ["What to experiment next"] }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Daily Operation Plan",
+      "type": "table",
+      "columns": ["Role", "Cadence", "Daily Focus", "KPI"],
+      "rows": [
+        ["SEO Lead", "Daily", "Ranking/traffic/conversion anomalies, blockers", "Blockers removed"],
+        ["On-Page SEO", "Daily", "Priority pages, technical fixes, internal links", "Rankings and Organic CVR"],
+        ["Off-Page", "Daily", "Prospecting, outreach, link monitoring", "Referring domains"],
+        ["Intelligence", "Daily/Auto", "SERPs, rankings, backlinks, anomalies", "Detection speed"],
+        ["ASO", "Daily", "Rankings, installs, reviews, ratings", "Installs to revenue"]
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Weekly Team Operation",
+      "type": "columns",
+      "columns": [
+        { "header": "Monday - Strategy", "items": ["Review week", "TOP 5 priorities"] },
+        { "header": "Tuesday - On-Page", "items": ["Technical", "Content", "CRO"] },
+        { "header": "Wednesday - Off-Page", "items": ["Authority", "Outreach", "Digital PR"] },
+        { "header": "Thursday - ASO", "items": ["Visibility", "Conversion experiments"] },
+        { "header": "Friday - Reporting", "items": ["What did I do?", "What worked?", "What failed?", "What next?"] }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Monthly Strategy Meeting",
+      "type": "columns",
+      "columns": [
+        { "header": "SEO Metrics", "items": ["Organic traffic", "Rankings", "Indexed pages", "Referring domains"] },
+        { "header": "Business Metrics", "items": ["Registrations", "Conversions", "Revenue", "SEO ROI"] },
+        { "header": "ASO Metrics", "items": ["Impressions", "Store visitors", "Installs", "Revenue"] },
+        { "header": "Decisions", "items": ["SCALE", "FIX", "STOP", "TEST"] }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "KPI Formulas",
+      "type": "table",
+      "columns": ["Metric", "Formula"],
+      "rows": [
+        ["Organic CVR", "Conversions / Organic Sessions"],
+        ["Revenue per Organic Session", "Organic Revenue / Organic Sessions"],
+        ["Revenue per User", "Organic Revenue / Conversions"],
+        ["SEO ROI", "(Organic Revenue - SEO Cost) / SEO Cost"],
+        ["Keyword Growth %", "(Current - Previous) / Previous"],
+        ["ASO Store Conversion", "Installs / Store Visitors"],
+        ["ASO Registration Rate", "Registrations / Installs"],
+        ["Revenue per Install", "Organic Revenue / Installs"],
+        ["Issue Resolution Rate", "Resolved / Detected Issues"],
+        ["Backlink Growth %", "(Current RD - Previous RD) / Previous RD"]
+      ]
+    },
+    {
+      "id": 13,
+      "title": "Tools and Cost",
+      "type": "table",
+      "columns": ["Tool", "Cost"],
+      "rows": [
+        ["Webshell", "$400"],
+        ["RDP", "$50"],
+        ["Google Dev account", "$25"],
+        ["3rd Party account", "$65"],
+        ["Total", "$540"]
+      ]
+    },
+    {
+      "id": 14,
+      "title": "Risks, Dependencies, and Guardrails",
+      "type": "columns",
+      "columns": [
+        { "header": "Risks", "items": ["Policy enforcement", "Authority volatility", "Attribution gaps"] },
+        { "header": "Dependencies", "items": ["Lead prioritization", "Intelligence automation", "Cross-team coordination"] },
+        { "header": "Guardrails", "items": ["No unauthorized access", "Owned/authorized infra only", "Platform rules respected"] }
+      ]
+    },
+    {
+      "id": 15,
+      "title": "Next Steps and Asks",
+      "type": "list",
+      "items": [
+        "Approve priority framework and roadmap",
+        "Confirm markets, platforms, revenue pages",
+        "Stand up baseline reporting",
+        "Launch weekly cadence",
+        "Schedule first monthly strategy meeting",
+        "ASK: SEO Lead confirms targets, markets, websites, KPIs"
+      ]
+    }
+  ]
 }
-renderers.get(slide["type"], render_list)(slide)
